@@ -1,7 +1,15 @@
 require('dotenv').config();
 
+const fs = require('fs');
 const { Telegraf } = require('telegraf');
 const NodeWebcam = require('node-webcam');
+
+// create images folder
+const imageFolder = './images';
+
+if (!fs.existsSync(imageFolder)) {
+  fs.mkdirSync(imageFolder);
+}
 
 const webcamOptions = {
   width: 640,
@@ -27,7 +35,10 @@ bot.command('start', (ctx) => {
 bot.command('pic', (ctx) => {
   console.log(ctx.from);
   if (allowedIds.includes(ctx.from.id.toString())) {
-    bot.telegram.sendMessage(ctx.chat.id, `Hello ${ctx.from.first_name}! Taking photo, one moment please...`);
+    bot.telegram.sendMessage(
+      ctx.chat.id,
+      `Hello ${ctx.from.first_name}! Taking photo, one moment please...`
+    );
     NodeWebcam.capture(
       `images/pic_${Date.now()}`,
       webcamOptions,
