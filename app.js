@@ -35,18 +35,25 @@ bot.command('start', (ctx) => {
 bot.command('pic', (ctx) => {
   console.log(ctx.from);
   if (allowedIds.includes(ctx.from.id.toString())) {
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      `Hello ${ctx.from.first_name}! Taking photo, one moment please...`
-    );
-    NodeWebcam.capture(
-      `images/pic_${Date.now()}`,
-      webcamOptions,
-      (err, data) => {
-        console.log(`Sending photo ${data}`);
-        bot.telegram.sendPhoto(ctx.chat.id, { source: data });
-      }
-    );
+    try {
+      bot.telegram.sendMessage(
+        ctx.chat.id,
+        `Hello ${ctx.from.first_name}! Taking photo, one moment please...`
+      );
+      NodeWebcam.capture(
+        `images/pic_${Date.now()}`,
+        webcamOptions,
+        (err, data) => {
+          if (err) {
+            console.log(`Error in webcam ${err}`);
+          }
+          console.log(`Sending photo ${data}`);
+          bot.telegram.sendPhoto(ctx.chat.id, { source: data });
+        }
+      );
+    } catch (err) {
+      console.log(`General error in /pic ${err}`);
+    }
   } else {
     bot.telegram.sendMessage(ctx.chat.id, 'Sorry, not allowed!');
   }
